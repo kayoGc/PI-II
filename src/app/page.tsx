@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/src/components/Header";
+
 import productService from "@/src/lib/firebase/models/product";
 import { addToCart, money, ShopProduct } from "@/src/lib/cart-service/shop";
 export default function Home() {
@@ -171,6 +172,7 @@ export default function Home() {
         )}
       </main>
     </>
+
   );
 }
 
