@@ -1,136 +1,173 @@
 'use client'
+
 import { useState } from "react";
-import productService from "@/src/lib/firebase/models/product";
-import { TypeProduct } from "@/src/lib/firebase/models/product";
-import imageManipulator from "@/src/lib/image-manipulator/image-manipulator";
-import imageService from "@/src/lib/firebase/storage/image-service";
-import AdminHeader from "@/src/components/admin/Header";
-import AdminFormCard from "@/src/components/admin/form-card";
+import { useRouter } from "next/navigation";
+import Image from "next/image";
+import Button from "@/src/components/Button";
+import { parseCurrency } from "@/src/lib/utils/formatters";
 
-export default function Home() {
-  const [img, setImg] = useState<string | null>();
+export default function AdminProductsPage() {
+  const router = useRouter();
+  const [img, setImg] = useState<string | null>(null);
+  const [displayPrice, setDisplayPrice] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
 
-  // função que roda quando clica em criar produto
-  async function handleSubmit(event: any) {
-    // impede funcionamento padrão que é de mandar os dados via http para o servidor
-    event.preventDefault();
-
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const numericFloat = parseCurrency(value);
     
+    setDisplayPrice(
+      numericFloat.toLocaleString("pt-BR", {
+        style: "currency",
+        currency: "BRL",
+      })
+    );
+  };
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setLoading(true);
+    setSuccessMessage("");
 
     try {
-      // lida primeiro com a imagem
-      const img = event.target[4].files[0];
-  
-      const compressedImg = await imageManipulator.compress(img);
-      const imgType = '.' + compressedImg.type.split('/')[1];
-      
-      const productKey = productService.getNewRandomId();
-      const imgName = productKey + imgType;
+      const form = event.currentTarget;
+      const fileInput = form.elements.namedItem('input_imagem_produto') as HTMLInputElement;
+      const imgFile = fileInput?.files?.[0];
 
-      const imgDownloadUrl = await imageService.uploadNewImage(imgName, compressedImg);
+      let fakeImageUrl = "/images/oleo-essencial.jpg";
 
-      // seria bom adicionar aqui uma forma de apagar a imagem ou tentar de novo se falhar salvar no banco de dados
-
-      // lida com banco de dados
-      const product: TypeProduct = {
-        name: event.target[0].value,
-        description: event.target[1].value,
-        category: event.target[2].value,
-        value: event.target[3].value,
-        imgName: imgName,
-        imgUrl: imgDownloadUrl
+      if (imgFile) {
+        fakeImageUrl = URL.createObjectURL(imgFile);
       }
 
-      await productService.save(productKey, product);
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      console.log("Produto criado");
-
-      setImg(imgDownloadUrl);
-    } catch (err: any) {
-      console.error("erro criando produto:", err.message);
-    } 
-
+      setImg(fakeImageUrl);
+      setSuccessMessage("✨ Produto cadastrado com sucesso (Simulação Local)!");
+      form.reset();
+      setDisplayPrice("");
+    } catch (err: unknown) {
+      const error = err as Error;
+      console.error("Erro na simulação:", error.message);
+      alert("Erro ao criar produto: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
-
-    <div className="flex flex-col gap-5 rounded border-2 border-black p-5">
-      <AdminHeader/>
-      
-      {img && 
-        <img src={img}></img>
-      }
-
-      <form className="flex gap-5 flex-col" onSubmit={(event) => handleSubmit(event)}>
+    <main className="min-h-screen bg-gray-50 flex flex-col p-6 md:p-10">
+      <div className="max-w-4xl w-full mx-auto">
         
-        <div className="flex gap-2 flex-col md:flex-row align-middle justify-items-center">
-          
-          <label htmlFor='input_nome_produto' className="p-2" >Nome do produto:</label>
-          <input 
-            required
-            type="text" 
-            id="input_nome_produto" 
-            placeholder="Coloque o nome"
-            className="p-2 rounded border-gray-400 border focus:ring-4 ring-blue-300 transition"
-          />
+        <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b pb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900">Novo Produto (Modo Simulação)</h1>
+            <p className="text-sm text-gray-500 mt-1">Cadastre itens para testar o fluxo visual do catálogo.</p>
+          </div>
+          <Button variant="secondary" onClick={() => router.push('/admin')}>
+            Voltar ao Painel
+          </Button>
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+
+          {successMessage && (
+            <div className="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm font-medium">
+              {successMessage}
+            </div>
+          )}
+
+          {img && (
+            <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-4">
+              <div className="relative h-16 w-16 overflow-hidden rounded-lg shadow-sm">
+                <Image src={img} alt="Preview" fill className="object-cover" />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Imagem carregada com sucesso:</p>
+                <p className="text-xs text-gray-500">Pronta para exibição na vitrine</p>
+              </div>
+            </div>
+          )}
+
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="space-y-1">
+                <label htmlFor="input_nome_produto" className="block text-sm font-medium text-gray-700">Nome do Produto</label>
+                <input 
+                  required
+                  type="text" 
+                  id="input_nome_produto" 
+                  name="input_nome_produto"
+                  placeholder="Ex: Óleo Essencial de Lavanda"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm bg-white text-gray-900"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label htmlFor="input_categoria_produto" className="block text-sm font-medium text-gray-700">Categoria</label>
+                <input 
+                  required
+                  type="text" 
+                  id="input_categoria_produto" 
+                  name="input_categoria_produto"
+                  placeholder="Ex: Aromaterapia"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm bg-white text-gray-900"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label htmlFor="input_descricao_produto" className="block text-sm font-medium text-gray-700">Descrição</label>
+              <textarea
+                required
+                id="input_descricao_produto" 
+                name="input_descricao_produto"
+                rows={3}
+                placeholder="Descreva os benefícios, aroma e modo de uso..."
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm bg-white text-gray-900 resize-none"
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="space-y-1">
+                <label htmlFor="input_valor_produto" className="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                <input 
+                  required
+                  type="text"
+                  id="input_valor_produto" 
+                  name="input_valor_produto"
+                  value={displayPrice}
+                  onChange={handlePriceChange}
+                  placeholder="R$ 0,00"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm bg-white text-gray-900 font-semibold text-red-900"
+                />
+              </div>
+
+              <div className="space-y-1">
+                <label htmlFor="input_imagem_produto" className="block text-sm font-medium text-gray-700">Imagem do Produto</label>
+                <input 
+                  type="file" 
+                  id="input_imagem_produto"
+                  name="input_imagem_produto"
+                  accept="image/*"
+                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-900 hover:file:bg-red-100 transition cursor-pointer border border-gray-300 rounded-lg p-1 bg-white"
+                />
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <Button type="submit" disabled={loading} className="w-full py-3 text-base">
+                {loading ? "Processando..." : "Criar Produto (Simulação)"}
+              </Button>
+            </div>
+
+          </form>
 
         </div>
 
-        <div className="flex gap-2 flex-col md:flex-row align-middle justify-items-center">
-          
-          <label htmlFor='input_descricao_produto' className="p-2" >Descrição:</label>
-          <input
-            required
-            type="text" 
-            id="input_descricao_produto" 
-            placeholder="Coloque o nome"
-            className="p-2 rounded border-gray-400 border focus:ring-4 ring-blue-300 transition"
-          />
-
-        </div>
-
-        <div className="flex gap-2 flex-col md:flex-row align-middle justify-items-center">
-          
-          <label htmlFor='input_categoria_produto' className="p-2" >categoria:</label>
-          <input 
-            required
-            type="text" 
-            id="input_categoria_produto" 
-            placeholder="Coloque o nome"
-            className="p-2 rounded border-gray-400 border focus:ring-4 ring-blue-300 transition"
-          />
-
-        </div>
-        
-        <div className="flex gap-2 flex-col md:flex-row align-middle justify-items-center">
-          
-          <label htmlFor='input_valor_produto' className="p-2" >Valor em R$:</label>
-          <input 
-            required
-            type="number" 
-            id="input_valor_produto" 
-            placeholder="Coloque o valor"
-            className="p-2 rounded border-gray-400 border focus:ring-4 ring-blue-300 transition"
-            />
-
-        </div>
-
-        <div className="flex gap-2 flex-col md:flex-row align-middle justify-items-center">
-          
-          <label htmlFor='input_imagem_produto' className="p-2" >Imagem:</label>
-          <input 
-            type="file" 
-            className="p-2 rounded border-gray-400 border hover:ring-4 ring-blue-300 transition cursor-pointer"          
-          />
-
-        </div>
-
-        <button type="submit" className="p-4 bg-gray-400 cursor-pointer hover:bg-gray-700 transition">
-          criar produto      
-        </button>
-      </form>
-    </div>
-
-
+      </div>
+    </main>
   );
 }

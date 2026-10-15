@@ -10,7 +10,7 @@ export default function AdminHeader() {
 
         {/* Logo */}
         <Link
-          href="/Admin"
+          href="/admin"
           aria-label="Voltar para a página inicial admin"
           className="shrink-0"
         >
@@ -27,14 +27,14 @@ export default function AdminHeader() {
         {/* Navegação administrativa */}
         <nav className="flex flex-wrap items-center justify-end gap-2 sm:gap-4">
           <Link
-            href="/admin/produtos/novo"
+            href="/admin/products"
             className="rounded-md bg-red-900 px-3 py-2 text-center text-sm font-medium text-white transition-colors hover:bg-red-800 sm:px-5 sm:py-3"
           >
             Cadastro de produtos
           </Link>
 
           <Link
-            href="/admin/produtos"
+            href="/admin/products"
             className="rounded-md border border-red-900 px-3 py-2 text-center text-sm font-medium text-red-900 transition-colors hover:bg-red-50 sm:px-5 sm:py-3"
           >
             Editar produtos
