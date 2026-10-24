@@ -1,13 +1,6 @@
-export type ShopProduct = {
-  id: string;
-  name: string;
-  category: string;
-  description: string;
-  value: number;
-  imgUrl: string | null;
-};
+import { TypeProduct } from "../firebase/models/product";
 
-export type CartItem = ShopProduct & {
+export type CartItem = TypeProduct & {
   quantity: number;
 };
 
@@ -47,7 +40,7 @@ export function writeCart(items: CartItem[]): void {
   window.dispatchEvent(new Event("cart-updated"));
 }
 
-export function addToCart(product: ShopProduct): void {
+export function addToCart(product: TypeProduct): void {
   const items = readCart();
   const item = items.find((item) => item.id === product.id);
 

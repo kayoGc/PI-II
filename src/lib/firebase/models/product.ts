@@ -61,6 +61,8 @@ class Product {
         let snapshot: DataSnapshot = await get(child(ref(database), refString));
         let response = snapshot.val();
 
+        if (response === null) return [];
+
         let objs: any[] = [];
         // transformar objeto em array
         if (typeof response === 'object') {
