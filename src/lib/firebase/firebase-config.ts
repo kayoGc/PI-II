@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase, connectDatabaseEmulator } from "firebase/database";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
+import { getAuth, connectAuthEmulator } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -19,12 +20,14 @@ const app = initializeApp(firebaseConfig);
 
 const database = getDatabase(app);
 const storage = getStorage(app);
+const auth = getAuth(app);
 
 // conecta no emulador
 if (process.env.NEXT_PUBLIC_IS_DEV) {
   connectDatabaseEmulator(database, '127.0.0.1', 9000);
   connectStorageEmulator(storage, '127.0.0.1', 9199);
+  connectAuthEmulator(auth, 'http://127.0.0.1:9099/');
 }
 
 
-export { database, storage }
+export { database, storage, auth }

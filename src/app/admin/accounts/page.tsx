@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/src/components/Button';
+import { useEffect } from 'react';
+import authService from '@/src/lib/firebase/auth/auth-service';
 
 type AdminAccount = {
   id: number;
@@ -27,6 +29,25 @@ export default function AdminAccountsPage() {
   const router = useRouter();
   const [accounts, setAccounts] = useState<AdminAccount[]>(initialAccounts);
   const [notice, setNotice] = useState('');
+
+  // analisa se tem um usuário logado
+  // se não tiver manda para a página inicial
+  useEffect(() => {
+    
+    authService.isUserLogged()
+    .then((isLogged) => {
+      
+      if (!isLogged) {
+        router.push('/');
+      }
+
+    })
+    .catch((err: any) => {
+      console.error("Erro verificando usuário", err.message);
+      router.push('/');
+    })
+
+  }, [])
 
   const handleDelete = (id: number) => {
     if (accounts.length <= 1) {

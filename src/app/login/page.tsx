@@ -6,6 +6,10 @@ import Button from '@/src/components/Button';
 import Input from '@/src/components/Input';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import authService from '@/src/lib/firebase/auth/auth-service';
+
+// TODO
+// adicionar mensagem de erro quando login der errado
 
 export default function LoginPage() {
   const [username, setUsername] = useState('');
@@ -25,6 +29,7 @@ export default function LoginPage() {
       newErrors.username = 'Por favor, informe seu usuário.';
       hasError = true;
     }
+
     if (!password.trim()) {
       newErrors.password = 'Por favor, informe sua senha.';
       hasError = true;
@@ -38,9 +43,11 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      // TODO: Substituir pela chamada de autenticação do Firebase
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      // router.push('/');
+      // await new Promise(resolve => setTimeout(resolve, 1500));
+
+      await authService.login(username, password);
+      
+      router.push('/admin');
     } catch (error) {
       console.error('Erro de autenticação:', error);
     } finally {

@@ -2,9 +2,30 @@
 
 import { useRouter } from 'next/navigation';
 import Button from '@/src/components/Button';
+import { useEffect } from 'react';
+import authService from '@/src/lib/firebase/auth/auth-service';
 
 export default function AdminDashboardPage() {
   const router = useRouter();
+
+  // analisa se tem um usuário logado
+  // se não tiver manda para a página inicial
+  useEffect(() => {
+    
+    authService.isUserLogged()
+    .then((isLogged) => {
+      
+      if (!isLogged) {
+        router.push('/');
+      }
+
+    })
+    .catch((err: any) => {
+      console.error("Erro verificando usuário", err.message);
+      router.push('/');
+    })
+
+  }, [])
 
   return (
     <main className="min-h-screen bg-gray-50 p-6 md:p-10">

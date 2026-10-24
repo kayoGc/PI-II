@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/src/components/Button';
 import Input from '@/src/components/Input';
+import { useEffect } from 'react';
+import authService from '@/src/lib/firebase/auth/auth-service';
 
 export default function AdminAddAdminPage() {
   const router = useRouter();
@@ -14,6 +16,25 @@ export default function AdminAddAdminPage() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
+
+  // analisa se tem um usuário logado
+  // se não tiver manda para a página inicial
+  useEffect(() => {
+    
+    authService.isUserLogged()
+    .then((isLogged) => {
+      
+      if (!isLogged) {
+        router.push('/');
+      }
+
+    })
+    .catch((err: any) => {
+      console.error("Erro verificando usuário", err.message);
+      router.push('/');
+    })
+
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

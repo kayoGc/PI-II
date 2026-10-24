@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/src/components/Button';
+import { useEffect } from 'react';
+import authService from '@/src/lib/firebase/auth/auth-service';
 
 export default function AdminBuyMessagePage() {
   const router = useRouter();
@@ -12,6 +14,25 @@ export default function AdminBuyMessagePage() {
   );
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // analisa se tem um usuário logado
+  // se não tiver manda para a página inicial
+  useEffect(() => {
+    
+    authService.isUserLogged()
+    .then((isLogged) => {
+      
+      if (!isLogged) {
+        router.push('/');
+      }
+
+    })
+    .catch((err: any) => {
+      console.error("Erro verificando usuário", err.message);
+      router.push('/');
+    })
+
+  }, [])
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();

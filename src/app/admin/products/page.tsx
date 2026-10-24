@@ -7,6 +7,8 @@ import Button from "@/src/components/Button";
 import { parseCurrency } from "@/src/lib/utils/formatters";
 import imageService from "@/src/lib/firebase/storage/image-service";
 import productService, { TypeProduct } from "@/src/lib/firebase/models/product";
+import { useEffect } from "react";
+import authService from "@/src/lib/firebase/auth/auth-service";
 
 export default function AdminProductsPage() {
   const router = useRouter();
@@ -14,6 +16,25 @@ export default function AdminProductsPage() {
   const [displayPrice, setDisplayPrice] = useState("");
   const [loading, setLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
+
+  // analisa se tem um usuário logado
+  // se não tiver manda para a página inicial
+  useEffect(() => {
+    
+    authService.isUserLogged()
+    .then((isLogged) => {
+      
+      if (!isLogged) {
+        router.push('/');
+      }
+
+    })
+    .catch((err: any) => {
+      console.error("Erro verificando usuário", err.message);
+      router.push('/');
+    })
+
+  }, [])
 
   const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
