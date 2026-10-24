@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Button from "@/src/components/Button";
 import { parseCurrency } from "@/src/lib/utils/formatters";
+import imageService from "@/src/lib/firebase/storage/image-service";
+import productService, { TypeProduct } from "@/src/lib/firebase/models/product";
 
 export default function AdminProductsPage() {
   const router = useRouter();
@@ -33,23 +35,43 @@ export default function AdminProductsPage() {
     try {
       const form = event.currentTarget;
       const fileInput = form.elements.namedItem('input_imagem_produto') as HTMLInputElement;
+      const nameInput = form.elements.namedItem('input_nome_produto') as HTMLInputElement;
+      const categoryInput = form.elements.namedItem('input_categoria_produto') as HTMLInputElement;
+      const descriptionInput = form.elements.namedItem('input_descricao_produto') as HTMLInputElement;
+      const valueInput = form.elements.namedItem('input_valor_produto') as HTMLInputElement;
+
       const imgFile = fileInput?.files?.[0];
 
-      let fakeImageUrl = "/images/oleo-essencial.jpg";
-
-      if (imgFile) {
-        fakeImageUrl = URL.createObjectURL(imgFile);
+      if (!imgFile) {
+        throw new Error("Imagem não inserida");
       }
 
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const productId = productService.getNewRandomId();
 
-      setImg(fakeImageUrl);
-      setSuccessMessage("✨ Produto cadastrado com sucesso (Simulação Local)!");
+      // TODO
+      // fazer uma verificação se o arquivo realmente é imagem
+      // limitar também o tamanho da imagem talvez no maximo uns 2 mb
+
+      const imgUrl = await imageService.uploadNewImage(productId, imgFile);
+
+      const objProduct: TypeProduct = {
+        name: nameInput.value,
+        category: categoryInput.value,
+        description: descriptionInput.value,
+        value: parseCurrency(valueInput.value),
+        imgUrl,
+      } 
+
+      await productService.save(productId, objProduct);
+
+      setImg(imgUrl);
+
+      setSuccessMessage("Produto cadastrado com sucesso!");
       form.reset();
       setDisplayPrice("");
     } catch (err: unknown) {
       const error = err as Error;
-      console.error("Erro na simulação:", error.message);
+      console.error("Erro salvando produto:", error.message);
       alert("Erro ao criar produto: " + error.message);
     } finally {
       setLoading(false);
@@ -81,7 +103,7 @@ export default function AdminProductsPage() {
           {img && (
             <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-4">
               <div className="relative h-16 w-16 overflow-hidden rounded-lg shadow-sm">
-                <Image src={img} alt="Preview" fill className="object-cover" />
+                <img src={img} alt="Preview" content="fill" className="object-cover" />
               </div>
               <div>
                 <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Imagem carregada com sucesso:</p>

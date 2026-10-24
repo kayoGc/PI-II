@@ -10,7 +10,7 @@ export type TypeProduct = {
     category: string,
     description: string,
     value: number,
-    imgName: string | null,
+    // imgName: string | null,
     imgUrl: string | null,
 }
 
