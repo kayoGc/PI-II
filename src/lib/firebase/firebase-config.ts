@@ -22,12 +22,18 @@ const database = getDatabase(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
 
-// conecta no emulador
-if (process.env.NEXT_PUBLIC_IS_DEV) {
-  connectDatabaseEmulator(database, '127.0.0.1', 9000);
-  connectStorageEmulator(storage, '127.0.0.1', 9199);
-  connectAuthEmulator(auth, 'http://127.0.0.1:9099/');
+// 🛠️ Alterado para usar NODE_ENV do Next.js e removida a barra do Auth
+if (process.env.NODE_ENV === 'development') {
+  console.log("🛠️ Conectando aos emuladores locais do Firebase...");
+  
+  // Um bloco try/catch para evitar erros se o app tentar reconectar quente (Fast Refresh)
+  try {
+    connectDatabaseEmulator(database, '127.0.0.1', 9000);
+    connectStorageEmulator(storage, '127.0.0.1', 9199);
+    connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
+  } catch (error) {
+    console.log("Emuladores já estavam conectados:", error);
+  }
 }
 
-
-export { database, storage, auth }
+export { database, storage, auth };
