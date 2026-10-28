@@ -19,22 +19,22 @@ export default function AdminAddAdminPage() {
 
   // analisa se tem um usuário logado
   // se não tiver manda para a página inicial
-  useEffect(() => {
+  // useEffect(() => {
     
-    authService.isUserLogged()
-    .then((isLogged) => {
+  //   authService.isUserLogged()
+  //   .then((isLogged) => {
       
-      if (!isLogged) {
-        router.push('/');
-      }
+  //     if (!isLogged) {
+  //       router.push('/');
+  //     }
 
-    })
-    .catch((err: any) => {
-      console.error("Erro verificando usuário", err.message);
-      router.push('/');
-    })
+  //   })
+  //   .catch((err: any) => {
+  //     console.error("Erro verificando usuário", err.message);
+  //     router.push('/');
+  //   })
 
-  }, [])
+  // }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
