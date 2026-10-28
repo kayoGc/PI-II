@@ -41,6 +41,6 @@ yarn-error.log*
 next-env.d.ts
 
 # Variáveis de ambiente
-.env
+env
 .env*.local
 .env.local
