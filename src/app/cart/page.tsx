@@ -2,6 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import '@/src/lib/firebase/auth/auth-service';
+
+// Importações das funções do Realtime Database
+import { getDatabase, ref, get, child } from 'firebase/database';
 
 import Header from '@/src/components/Header';
 import {
@@ -15,6 +19,12 @@ export default function CartPage() {
   const [items, setItems] = useState<CartItem[]>([]);
   const [ready, setReady] = useState(false);
   const [notice, setNotice] = useState('');
+
+  // Novo estado para guardar as configurações vindas do Firebase
+  const [whatsappConfig, setWhatsappConfig] = useState({
+    phone: '',
+    template: 'Olá! Gostaria de adquirir:\n\n{items}\n\nTotal: {total}'
+  });
 
   useEffect(() => {
     const sync = () => {
@@ -31,6 +41,28 @@ export default function CartPage() {
       window.removeEventListener('cart-updated', sync);
       window.removeEventListener('storage', sync);
     };
+  }, []);
+
+  // Novo useEffect exclusivo para buscar os dados do Firebase assim que a página carrega
+  useEffect(() => {
+    const fetchWhatsappConfig = async () => {
+      try {
+        const dbRef = ref(getDatabase());
+        const snapshot = await get(child(dbRef, 'configuracoes/whatsapp'));
+        
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          setWhatsappConfig({
+            phone: (data.numero || '').replace(/\D/g, ''),
+            template: data.mensagemPadrao || 'Olá! Gostaria de adquirir:\n\n{items}\n\nTotal: {total}'
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao buscar configurações do WhatsApp no Firebase:", error);
+      }
+    };
+
+    fetchWhatsappConfig();
   }, []);
 
   function update(next: CartItem[]) {
@@ -55,20 +87,25 @@ export default function CartPage() {
     0
   );
 
-  const phone = (
-    process.env.NUMERO_DO_ZAP || ''
-  ).replace(/\D/g, '');
+  // O telefone agora vem do nosso estado que leu o Firebase, não mais do process.env
+  const phone = whatsappConfig.phone;
 
-  const message = `Olá! Gostaria de adquirir:
-${items
-  .map(
-    (item) =>
-      `${item.quantity} × ${item.name} — ${money(
-        item.value * item.quantity
-      )}`
-  )
-  .join('\n')}
-Total dos produtos: ${money(total)}`;
+  // Texto dos itens e do total
+  const itemsText = items
+    .map(
+      (item) =>
+        `${item.quantity} × ${item.name} — ${money(
+          item.value * item.quantity
+        )}`
+    )
+    .join('\n');
+
+  const totalText = money(total);
+
+  // Substituí as marcações {items} e {total} do modelo salvo lá no Admin
+  const message = whatsappConfig.template
+    .replace('{items}', itemsText)
+    .replace('{total}', totalText);
 
   return (
     <>
