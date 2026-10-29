@@ -3,10 +3,8 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Button from '@/src/components/Button';
-import authService from '@/src/lib/firebase/auth/auth-service';
-
-// 1. Importações do Firebase Realtime Database
-import { getDatabase, ref, set, get, child } from 'firebase/database';
+import { database } from '@/src/lib/firebase/firebase-config';
+import { ref, set, get, child } from 'firebase/database';
 
 export default function AdminBuyMessagePage() {
   const router = useRouter();
@@ -17,11 +15,11 @@ export default function AdminBuyMessagePage() {
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // 2. Busca os dados atuais do Firebase ao carregar a página
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const dbRef = ref(getDatabase());
+        // 3. Usamos a constante 'database' diretamente
+        const dbRef = ref(database);
         const snapshot = await get(child(dbRef, 'configuracoes/whatsapp'));
         
         if (snapshot.exists()) {
@@ -37,32 +35,14 @@ export default function AdminBuyMessagePage() {
     fetchConfig();
   }, []);
 
-  /* 
-  // Mantive seu código de auth comentado como estava
-  useEffect(() => {
-    authService.isUserLogged()
-    .then((isLogged) => {
-      if (!isLogged) {
-        router.push('/');
-      }
-    })
-    .catch((err: any) => {
-      console.error("Erro verificando usuário", err.message);
-      router.push('/');
-    })
-  }, [])
-  */
-
-  // 3. Atualiza a função handleSave para gravar no Firebase
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setSuccessMessage('');
 
     try {
-      const db = getDatabase();
-      // Salva no nó "configuracoes/whatsapp"
-      await set(ref(db, 'configuracoes/whatsapp'), {
+      // Usei a constante 'database' diretamente
+      await set(ref(database, 'configuracoes/whatsapp'), {
         numero: phoneNumber,
         mensagemPadrao: messageTemplate
       });
@@ -76,7 +56,6 @@ export default function AdminBuyMessagePage() {
     }
   };
 
-  // Correção aqui: usando template strings (crases) para múltiplas linhas
   const samplePreview = messageTemplate
     .replace('{items}', `1x Óleo Essencial de Lavanda (R$ 45,90)\n1x Vela Aromática de Baunilha (R$ 34,90)`)
     .replace('{total}', 'R$ 80,80');
@@ -85,7 +64,6 @@ export default function AdminBuyMessagePage() {
     <main className="min-h-screen flex flex-col bg-gray-50 p-6 md:p-10">
       <div className="mx-auto w-full max-w-4xl">
         
-        {/* Cabeçalho Limpo da Seção */}
         <div className="mb-8 flex flex-col gap-4 border-b pb-4 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Configuração do WhatsApp</h1>

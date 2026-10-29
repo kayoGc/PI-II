@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import '@/src/lib/firebase/auth/auth-service';
-
-// Importações das funções do Realtime Database
-import { getDatabase, ref, get, child } from 'firebase/database';
+import { database } from '@/src/lib/firebase/firebase-config';
+import { ref, get, child } from 'firebase/database';
 
 import Header from '@/src/components/Header';
 import {
@@ -47,7 +45,8 @@ export default function CartPage() {
   useEffect(() => {
     const fetchWhatsappConfig = async () => {
       try {
-        const dbRef = ref(getDatabase());
+        // 3. Usamos a constante 'database' diretamente
+        const dbRef = ref(database);
         const snapshot = await get(child(dbRef, 'configuracoes/whatsapp'));
         
         if (snapshot.exists()) {
@@ -87,10 +86,9 @@ export default function CartPage() {
     0
   );
 
-  // O telefone agora vem do nosso estado que leu o Firebase, não mais do process.env
   const phone = whatsappConfig.phone;
 
-  // Texto dos itens e do total
+  // Texto dos itens
   const itemsText = items
     .map(
       (item) =>
@@ -102,10 +100,14 @@ export default function CartPage() {
 
   const totalText = money(total);
 
-  // Substituí as marcações {items} e {total} do modelo salvo lá no Admin
+  // 4. Substituí as marcações {items} e {total} e forçei a quebra de linha usando \n para TESTE
   const message = whatsappConfig.template
     .replace('{items}', itemsText)
-    .replace('{total}', totalText);
+    .replace('{total}', totalText)
+    .replace(/\\n/g, '\n');
+
+  // 5. Codificamos a URL forçando o padrão %0D%0A que o WhatsApp exige para pular linha
+  const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message).replace(/%0A/g, '%0D%0A')}`;
 
   return (
     <>
@@ -266,9 +268,10 @@ export default function CartPage() {
                 Frete e disponibilidade serão combinados pelo WhatsApp.
               </p>
 
+              {/* 6. Atualizado o link para usar a whatsappUrl tratada */}
               {phone.length >= 10 ? (
                 <a
-                  href={`https://wa.me/${phone}?text=${encodeURIComponent(message)}`}
+                  href={whatsappUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="shop-button block text-center"
