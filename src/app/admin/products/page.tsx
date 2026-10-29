@@ -15,7 +15,6 @@ export default function AdminProductsPage() {
   const [img, setImg] = useState<string | null>(null);
   const [displayPrice, setDisplayPrice] = useState("");
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
 
   // analisa se tem um usuário logado
   // se não tiver manda para a página inicial
@@ -51,7 +50,6 @@ export default function AdminProductsPage() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setLoading(true);
-    setSuccessMessage("");
 
     try {
       const form = event.currentTarget;
@@ -87,9 +85,8 @@ export default function AdminProductsPage() {
 
       setImg(imgUrl);
 
-      setSuccessMessage("Produto cadastrado com sucesso!");
-      form.reset();
-      setDisplayPrice("");
+      sessionStorage.setItem("admin-product-created", "true");
+      router.push("/admin/products/manage");
     } catch (err: unknown) {
       const error = err as Error;
       console.error("Erro salvando produto:", error.message);
@@ -108,18 +105,12 @@ export default function AdminProductsPage() {
             <h1 className="text-2xl font-bold text-gray-900">Novo Produto (Modo Simulação)</h1>
             <p className="text-sm text-gray-500 mt-1">Cadastre itens para testar o fluxo visual do catálogo.</p>
           </div>
-          <Button variant="secondary" onClick={() => router.push('/admin')}>
-            Voltar ao Painel
+          <Button variant="secondary" onClick={() => router.push('/admin/products/manage')}>
+            Voltar aos produtos
           </Button>
         </div>
 
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
-
-          {successMessage && (
-            <div className="mb-6 p-4 rounded-xl bg-green-50 border border-green-200 text-green-800 text-sm font-medium">
-              {successMessage}
-            </div>
-          )}
 
           {img && (
             <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-4">
