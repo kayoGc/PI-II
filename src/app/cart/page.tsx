@@ -18,7 +18,13 @@ export default function CartPage() {
   const [ready, setReady] = useState(false);
   const [notice, setNotice] = useState('');
 
-  // Novo estado para guardar as configurações vindas do Firebase
+  // Estados para a API do ViaCEP e Validação
+  const [cep, setCep] = useState('');
+  const [address, setAddress] = useState<any>(null);
+  const [addressNumber, setAddressNumber] = useState('');
+  const [loadingCep, setLoadingCep] = useState(false);
+  const [cepError, setCepError] = useState('');
+
   const [whatsappConfig, setWhatsappConfig] = useState({
     phone: '',
     template: 'Olá! Gostaria de adquirir:\n\n{items}\n\nTotal: {total}'
@@ -41,11 +47,9 @@ export default function CartPage() {
     };
   }, []);
 
-  // Novo useEffect exclusivo para buscar os dados do Firebase assim que a página carrega
   useEffect(() => {
     const fetchWhatsappConfig = async () => {
       try {
-        // 3. Usamos a constante 'database' diretamente
         const dbRef = ref(database);
         const snapshot = await get(child(dbRef, 'configuracoes/whatsapp'));
         
@@ -63,6 +67,39 @@ export default function CartPage() {
 
     fetchWhatsappConfig();
   }, []);
+
+  // Função que valida e consome a API do ViaCEP
+  const handleCepChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/\D/g, '');
+    setCep(value);
+    setCepError('');
+    setAddress(null);
+    setAddressNumber(''); // Reseta o número se o CEP mudar
+
+    // Quando completar 8 dígitos, dispara a validação na API
+    if (value.length === 8) {
+      setLoadingCep(true);
+      try {
+        const response = await fetch(`https://viacep.com.br/ws/${value}/json/`);
+        const data = await response.json();
+        
+        if (!data.erro) {
+          setAddress(data);
+          setCepError('');
+        } else {
+          setCepError('CEP não encontrado na base de dados.');
+          setAddress(null);
+        }
+      } catch (error) {
+        console.error('Erro ao buscar CEP:', error);
+        setCepError('Erro ao validar o CEP. Tente novamente.');
+      } finally {
+        setLoadingCep(false);
+      }
+    } else if (value.length > 0 && value.length < 8) {
+      setCepError('O CEP deve conter 8 dígitos.');
+    }
+  };
 
   function update(next: CartItem[]) {
     try {
@@ -88,7 +125,6 @@ export default function CartPage() {
 
   const phone = whatsappConfig.phone;
 
-  // Texto dos itens
   const itemsText = items
     .map(
       (item) =>
@@ -100,14 +136,20 @@ export default function CartPage() {
 
   const totalText = money(total);
 
-  // 4. Substituí as marcações {items} e {total} e forçei a quebra de linha usando \n para TESTE
+  // Injeta o endereço validado pela API e o número digitado na mensagem do WhatsApp
+  const addressText = address 
+    ? `\n\n*Endereço de Entrega:* ${address.logradouro}, ${addressNumber} - ${address.bairro} - ${address.localidade}/${address.uf} (CEP: ${cep})` 
+    : '';
+
   const message = whatsappConfig.template
     .replace('{items}', itemsText)
     .replace('{total}', totalText)
-    .replace(/\\n/g, '\n');
+    .replace(/\\n/g, '\n') + addressText;
 
-  // 5. Codificamos a URL forçando o padrão %0D%0A que o WhatsApp exige para pular linha
   const whatsappUrl = `https://wa.me/${phone}?text=${encodeURIComponent(message).replace(/%0A/g, '%0D%0A')}`;
+
+  // Condição para o formulário estar válido: telefone configurado, endereço validado pela API e número preenchido
+  const isFormValid = phone.length >= 10 && address !== null && addressNumber.trim() !== '';
 
   return (
     <>
@@ -264,12 +306,58 @@ export default function CartPage() {
                 <strong>{money(total)}</strong>
               </div>
 
-              <p className="mb-5 text-sm text-gray-600">
-                Frete e disponibilidade serão combinados pelo WhatsApp.
-              </p>
+              {/* Validação de CEP integrada antes do botão */}
+              <div className="mb-5 space-y-3">
+                <div>
+                  <label htmlFor="cepInput" className="block text-xs font-semibold text-gray-700 mb-1">
+                    Informe seu CEP para entrega: <span className="text-red-700">*</span>
+                  </label>
+                  
+                  <input
+                    id="cepInput"
+                    type="text"
+                    maxLength={8}
+                    placeholder="Digite o CEP (8 dígitos)"
+                    value={cep}
+                    onChange={handleCepChange}
+                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-red-900 focus:outline-none"
+                  />
+                </div>
 
-              {/* 6. Atualizado o link para usar a whatsappUrl tratada */}
-              {phone.length >= 10 ? (
+                {loadingCep && (
+                  <p className="text-xs text-gray-500">Validando CEP na API...</p>
+                )}
+
+                {cepError && (
+                  <p className="text-xs text-red-600 font-medium">{cepError}</p>
+                )}
+
+                {address && (
+                  <div className="space-y-3">
+                    <div className="rounded-lg bg-white p-3 text-xs text-gray-600 border border-emerald-200 bg-emerald-50/50">
+                      <p className="font-medium text-emerald-900">✓ Endereço validado:</p>
+                      <p className="text-gray-800 mt-0.5">{address.logradouro}, {address.bairro}</p>
+                      <p className="text-gray-600">{address.localidade} - {address.uf}</p>
+                    </div>
+
+                    <div>
+                      <label htmlFor="addressNumber" className="block text-xs font-semibold text-gray-700 mb-1">
+                        Número e Complemento: <span className="text-red-700">*</span>
+                      </label>
+                      <input
+                        id="addressNumber"
+                        type="text"
+                        placeholder="Ex: 123, Apto 45"
+                        value={addressNumber}
+                        onChange={(e) => setAddressNumber(e.target.value)}
+                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-red-900 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {isFormValid ? (
                 <a
                   href={whatsappUrl}
                   target="_blank"
@@ -287,8 +375,12 @@ export default function CartPage() {
                     Finalizar pelo WhatsApp
                   </button>
 
-                  <p className="mt-3 text-sm text-gray-600">
-                    O contato da loja ainda não está disponível.
+                  <p className="mt-3 text-xs text-amber-800">
+                    {!address 
+                      ? "⚠️ Informe um CEP válido para liberar o envio." 
+                      : addressNumber.trim() === '' 
+                        ? "⚠️ Preencha o número do endereço."
+                        : "O contato da loja não está configurado."}
                   </p>
                 </>
               )}
