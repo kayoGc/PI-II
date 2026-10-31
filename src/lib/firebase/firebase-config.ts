@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, connectDatabaseEmulator } from "firebase/database";
 import { getStorage, connectStorageEmulator } from "firebase/storage";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
+import { getFunctions, connectFunctionsEmulator } from "firebase/functions";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -21,6 +22,7 @@ const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 const storage = getStorage(app);
 const auth = getAuth(app);
+const functions = getFunctions(app);
 
 // 🛠️ Alterado para usar NODE_ENV do Next.js e removida a barra do Auth
 if (process.env.NODE_ENV === 'development') {
@@ -30,10 +32,11 @@ if (process.env.NODE_ENV === 'development') {
   try {
     connectDatabaseEmulator(database, '127.0.0.1', 9000);
     connectStorageEmulator(storage, '127.0.0.1', 9199);
+    connectFunctionsEmulator(functions, '127.0.0.1', 5001);
     connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
   } catch (error) {
     console.log("Emuladores já estavam conectados:", error);
   }
 }
 
-export { database, storage, auth };
+export { database, storage, auth, functions };

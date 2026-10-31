@@ -10,22 +10,22 @@ export default function AdminDashboardPage() {
 
   // analisa se tem um usuário logado
   // se não tiver manda para a página inicial
-  // useEffect(() => {
+  useEffect(() => {
     
-  //   authService.isUserLogged()
-  //   .then((isLogged) => {
+    authService.isUserLogged()
+    .then((isLogged) => {
       
-  //     if (!isLogged) {
-  //       router.push('/');
-  //     }
+      if (!isLogged) {
+        router.push('/');
+      }
 
-  //   })
-  //   .catch((err: any) => {
-  //     console.error("Erro verificando usuário", err.message);
-  //     router.push('/');
-  //   })
+    })
+    .catch((err: any) => {
+      console.error("Erro verificando usuário", err.message);
+      router.push('/');
+    })
 
-  // }, [])
+  }, [])
 
   return (
     <main className="min-h-screen bg-gray-50 p-6 md:p-10">

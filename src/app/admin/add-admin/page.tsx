@@ -6,6 +6,8 @@ import Button from '@/src/components/Button';
 import Input from '@/src/components/Input';
 import { useEffect } from 'react';
 import authService from '@/src/lib/firebase/auth/auth-service';
+import { httpsCallable } from 'firebase/functions';
+import { functions } from '@/src/lib/firebase/firebase-config';
 
 export default function AdminAddAdminPage() {
   const router = useRouter();
@@ -19,22 +21,34 @@ export default function AdminAddAdminPage() {
 
   // analisa se tem um usuário logado
   // se não tiver manda para a página inicial
-  // useEffect(() => {
+  useEffect(() => {
     
-  //   authService.isUserLogged()
-  //   .then((isLogged) => {
+    const a = httpsCallable(functions, 'listAdmins');
+
+    a()
+      .then((result: any) => {
+        console.log(result);
+      })
+      .catch((err: any) => {
+        console.error(err.message);
+      })
+
+    // authService.isUserLogged()
+    // .then((isLogged) => {
       
-  //     if (!isLogged) {
-  //       router.push('/');
-  //     }
+    //   if (!isLogged) {
+    //     router.push('/');
+    //   }
+      
 
-  //   })
-  //   .catch((err: any) => {
-  //     console.error("Erro verificando usuário", err.message);
-  //     router.push('/');
-  //   })
 
-  // }, [])
+    // })
+    // .catch((err: any) => {
+    //   console.error("Erro verificando usuário", err.message);
+    //   router.push('/');
+    // })
+
+  }, [])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +56,7 @@ export default function AdminAddAdminPage() {
     setSuccess('');
 
     if (!name.trim() || !email.trim() || !password.trim()) {
-      setError('Por favor, preencha todos os campos obrigatórios.');
+      setError('TODOPor favor, preencha todos os campos obrigatórios.');
       return;
     }
 
