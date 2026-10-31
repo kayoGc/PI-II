@@ -177,12 +177,12 @@ export default function CartPage() {
         {!ready ? (
           <p>Carregando carrinho…</p>
         ) : items.length === 0 ? (
-          <div className="rounded-2xl bg-[#f7f5f3] p-10 text-center">
+          <div className="rounded-2xl bg-card-light dark:bg-card-dark p-10 text-center">
             <h2 className="text-xl font-medium">
               Seu carrinho está vazio
             </h2>
 
-            <p className="mt-2 mb-6 text-gray-600">
+            <p className="mt-2 mb-6 text-gray-600 dark:text-gray-400">
               Escolha seus produtos favoritos para começar.
             </p>
 
@@ -199,12 +199,14 @@ export default function CartPage() {
               aria-label="Itens do carrinho"
               className="space-y-4"
             >
+
               {items.map((item) => (
                 <article
                   key={item.id}
-                  className="flex gap-4 rounded-2xl border border-gray-200 p-4"
+                  className="flex gap-4 rounded-2xl border border-gray-200 dark:border-gray-600 p-4"
                 >
-                  <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-[#f7f5f3]">
+
+                  <div className="h-24 w-24 shrink-0 overflow-hidden rounded-xl bg-card-light dark:bg-card-dark">
                     {item.imgUrl && (
                       <img
                         src={item.imgUrl}
@@ -228,7 +230,7 @@ export default function CartPage() {
                     </p>
 
                     <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                      <div className="flex items-center rounded-lg border border-gray-300">
+                      <div className="flex items-center rounded-lg border border-gray-300 dark:border-gray-600">
                         <button
                           aria-label={`Diminuir quantidade de ${item.name}`}
                           disabled={item.quantity === 1}
@@ -296,12 +298,12 @@ export default function CartPage() {
               ))}
             </section>
 
-            <aside className="h-fit rounded-2xl bg-[#f7f5f3] p-6">
+            <aside className="h-fit rounded-2xl bg-card-light dark:bg-card-dark p-6">
               <h2 className="text-xl font-semibold">
                 Resumo da compra
               </h2>
 
-              <div className="my-6 flex justify-between border-b border-gray-300 pb-5">
+              <div className="my-6 flex justify-between border-b border-gray-300 dark:border-gray-600 pb-5">
                 <span>Total dos produtos</span>
                 <strong>{money(total)}</strong>
               </div>
@@ -309,7 +311,7 @@ export default function CartPage() {
               {/* Validação de CEP integrada antes do botão */}
               <div className="mb-5 space-y-3">
                 <div>
-                  <label htmlFor="cepInput" className="block text-xs font-semibold text-gray-700 mb-1">
+                  <label htmlFor="cepInput" className="block text-xs font-semibold text-gray-700 dark:text-gray-300 mb-1">
                     Informe seu CEP para entrega: <span className="text-red-700">*</span>
                   </label>
                   
@@ -320,12 +322,12 @@ export default function CartPage() {
                     placeholder="Digite o CEP (8 dígitos)"
                     value={cep}
                     onChange={handleCepChange}
-                    className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-red-900 focus:outline-none"
+                    className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-dark px-3 py-2 text-sm text-gray-900 dark:text-gray-200 focus:border-red-900 focus:outline-none"
                   />
                 </div>
 
                 {loadingCep && (
-                  <p className="text-xs text-gray-500">Validando CEP na API...</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-200">Validando CEP na API...</p>
                 )}
 
                 {cepError && (
@@ -334,23 +336,24 @@ export default function CartPage() {
 
                 {address && (
                   <div className="space-y-3">
-                    <div className="rounded-lg bg-white p-3 text-xs text-gray-600 border border-emerald-200 bg-emerald-50/50">
-                      <p className="font-medium text-emerald-900">✓ Endereço validado:</p>
-                      <p className="text-gray-800 mt-0.5">{address.logradouro}, {address.bairro}</p>
-                      <p className="text-gray-600">{address.localidade} - {address.uf}</p>
+                    <div className="rounded-lg bg-light dark:bg-dark p-3 text-xs text-gray-600 border border-emerald-800">
+                      <p className="font-medium text-emerald-500">✓ Endereço validado:</p>
+                      <p className="text-gray-800 dark:text-gray-200 mt-0.5">{address.logradouro}, {address.bairro}</p>
+                      <p className="text-gray-600 dark:text-gray-400">{address.localidade} - {address.uf}</p>
                     </div>
 
                     <div>
-                      <label htmlFor="addressNumber" className="block text-xs font-semibold text-gray-700 mb-1">
+                      <label htmlFor="addressNumber" className="block text-xs font-semibold text-gray-700 dark:text-gray-200 mb-1">
                         Número e Complemento: <span className="text-red-700">*</span>
                       </label>
+
                       <input
                         id="addressNumber"
                         type="text"
                         placeholder="Ex: 123, Apto 45"
                         value={addressNumber}
                         onChange={(e) => setAddressNumber(e.target.value)}
-                        className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:border-red-900 focus:outline-none"
+                        className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-light dark:bg-dark px-3 py-2 text-sm text-gray-900 dark:text-gray-300 focus:border-red-900 focus:outline-none"
                       />
                     </div>
                   </div>
@@ -375,7 +378,7 @@ export default function CartPage() {
                     Finalizar pelo WhatsApp
                   </button>
 
-                  <p className="mt-3 text-xs text-amber-800">
+                  <p className="mt-3 text-xs text-amber-800 dark:text-amber-500">
                     {!address 
                       ? "⚠️ Informe um CEP válido para liberar o envio." 
                       : addressNumber.trim() === '' 
@@ -385,7 +388,7 @@ export default function CartPage() {
                 </>
               )}
 
-              <p className="mt-4 text-xs text-gray-500">
+              <p className="mt-4 text-xs text-gray-500 dark:text-gray-300">
                 Você poderá revisar a mensagem antes de enviar.
               </p>
             </aside>

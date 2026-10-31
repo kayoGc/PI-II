@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Button from '@/src/components/Button';
 import { database } from '@/src/lib/firebase/firebase-config';
 import { ref, set, get, child } from 'firebase/database';
+import ModeToggle from '@/src/components/mode-toggle';
 
 export default function AdminBuyMessagePage() {
   const router = useRouter();
@@ -61,32 +62,37 @@ export default function AdminBuyMessagePage() {
     .replace('{total}', 'R$ 80,80');
 
   return (
-    <main className="min-h-screen flex flex-col bg-gray-50 p-6 md:p-10">
+    <main className="min-h-screen flex flex-col bg-light dark:bg-dark p-6 md:p-10">
       <div className="mx-auto w-full max-w-4xl">
         
-        <div className="mb-8 flex flex-col gap-4 border-b pb-4 md:flex-row md:items-center md:justify-between">
+        <div className="mb-8 flex flex-col gap-4 border-b dark:border-gray-600 pb-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Configuração do WhatsApp</h1>
-            <p className="mt-1 text-sm text-gray-500">Defina o número oficial da loja e personalize o texto padrão dos pedidos.</p>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-200">Configuração do WhatsApp</h1>
+            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">Defina o número oficial da loja e personalize o texto padrão dos pedidos.</p>
           </div>
-          <Button variant="secondary" onClick={() => router.push('/admin')}>
-            Voltar ao Painel
-          </Button>
+
+          <div>
+            <ModeToggle/>
+
+            <Button variant="secondary" onClick={() => router.push('/admin')}>
+              Voltar ao Painel
+            </Button>
+          </div>
         </div>
 
         {successMessage && (
-          <div className="mb-6 rounded-xl border border-green-200 bg-green-50 p-4 text-sm font-medium text-green-800">
+          <div className="mb-6 rounded-xl border border-green-200 bg-green-50 dark:bg-emerald-700 p-4 text-sm font-medium text-green-800 dark:text-green-200">
             {successMessage}
           </div>
         )}
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           
-          <div className="rounded-2xl border border-gray-100 bg-white p-6 shadow-sm md:col-span-2 md:p-8">
+          <div className="rounded-2xl border border-gray-100 dark:border-gray-600 bg-small-light dark:bg-small-dark p-6 shadow-sm md:col-span-2 md:p-8">
             <form onSubmit={handleSave} className="space-y-5">
               
               <div className="space-y-1">
-                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Número do WhatsApp da Loja (com DDI e DDD)
                 </label>
                 <input 
@@ -96,12 +102,12 @@ export default function AdminBuyMessagePage() {
                   value={phoneNumber}
                   onChange={(e) => setPhoneNumber(e.target.value)}
                   placeholder="Ex: 5511999999999"
-                  className="w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm text-gray-900 transition focus:border-red-900 focus:outline-none focus:ring-2 focus:ring-red-900/20"
+                  className="w-full rounded-lg border border-gray-300 dark:border-gray-600 bg-small-light dark:bg-small-dark px-4 py-2.5 text-sm text-gray-900 dark:text-gray-300 transition focus:border-red-900 focus:outline-none focus:ring-2 focus:ring-red-900/20"
                 />
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="messageTemplate" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="messageTemplate" className="block text-sm font-medium text-gray-700 dark:text-gray-200">
                   Modelo da Mensagem do Pedido
                 </label>
                 <textarea
@@ -110,7 +116,7 @@ export default function AdminBuyMessagePage() {
                   rows={6}
                   value={messageTemplate}
                   onChange={(e) => setMessageTemplate(e.target.value)}
-                  className="w-full resize-none font-mono text-xs rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-900 transition focus:border-red-900 focus:outline-none focus:ring-2 focus:ring-red-900/20"
+                  className="w-full resize-none font-mono text-xs rounded-lg border border-gray-300 dark:border-gray-600 bg-small-light dark:bg-small-dark  px-4 py-2.5 text-gray-900 dark:text-gray-300 transition focus:border-red-900 focus:outline-none focus:ring-2 focus:ring-red-900/20"
                 />
               </div>
 
@@ -123,19 +129,19 @@ export default function AdminBuyMessagePage() {
             </form>
           </div>
 
-          <div className="flex flex-col justify-between rounded-2xl border border-gray-100 bg-white p-6 shadow-sm">
+          <div className="flex flex-col justify-between rounded-2xl border border-gray-100 dark:border-gray-600 bg-small-light dark:bg-small-dark p-6 shadow-sm">
             <div>
               <div className="mb-3 flex items-center gap-2 text-sm font-semibold text-green-700">
                 Preview no WhatsApp
               </div>
-              <div className="whitespace-pre-wrap rounded-xl border border-emerald-100 bg-emerald-50 p-4 font-sans text-xs leading-relaxed text-gray-800 shadow-inner">
+              <div className="whitespace-pre-wrap rounded-xl border border-emerald-300 bg-emerald-100 dark:bg-emerald-700 p-4 font-sans text-xs leading-relaxed text-gray-800 dark:text-gray-300 shadow-inner">
                 {samplePreview}
               </div>
             </div>
 
-            <div className="mt-6 border-t border-gray-100 pt-4">
-              <p className="text-center text-xs text-gray-400">
-                Destino: <span className="font-semibold text-gray-600">+{phoneNumber}</span>
+            <div className="mt-6 border-t dark:border-gray-600 border-gray-100 pt-4">
+              <p className="text-center text-xs text-gray-400 dark:text-gray-200">
+                Destino: <span className="font-semibold text-gray-600 dark:text-gray-400">+{phoneNumber}</span>
               </p>
             </div>
           </div>

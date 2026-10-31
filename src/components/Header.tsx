@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { readCart } from "@/src/lib/cart-service/shop";
+import ModeToggle from "./mode-toggle";
 
 export default function Header() {
   const [count, setCount] = useState(0);
@@ -20,8 +21,8 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="border-b border-gray-200 bg-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
+    <header className="border-b dark:border-gray-600 dark:bg-dark dark:text-white" >
+      <div className="mx-auto flex max-w-6xl items-center  justify-between gap-4 py-3 ">
         {/* Logo da loja */}
         <Link href="/" aria-label="Página inicial">
           <Image
@@ -37,15 +38,15 @@ export default function Header() {
         {/* Ações do lado direito */}
         <nav className="flex items-center gap-4">
           {/* Produtos */}
-          <Link href="/" className="hidden text-sm sm:block">
+          {/* <Link href="/" className="hidden text-sm sm:block hover:bg-gray-800 transition rounded-full px-4">
             Produtos
-          </Link>
+          </Link> */}
 
           {/* Carrinho */}
           <Link
             href="/cart"
             aria-label={`Carrinho com ${count} itens`}
-            className="flex min-h-11 items-center gap-2 rounded-full bg-[#f7f5f3] px-4 text-sm"
+            className="flex min-h-11 items-center gap-2 rounded-full px-4 text-sm hover:bg-gray-800 transition"
           >
             <svg
               width="22"
@@ -63,10 +64,10 @@ export default function Header() {
             ({count})
           </Link>
 
-          {/* Login */}
-          <Link href="/login" className="flex min-h-11 items-center text-sm">
+          <ModeToggle />
+          {/* <Link href="/login" className="flex min-h-11 items-center text-sm">
             Entrar
-          </Link>
+          </Link> */}
         </nav>
       </div>
     </header>

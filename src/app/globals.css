@@ -1,5 +1,30 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  /* cor do fundo normal */
+  --color-light: oklch(98.5% 0.002 247.839);
+  --color-dark: oklch(21% 0.034 264.665);
+
+  --color-small-light: white;
+  --color-small-dark: oklch(0.2507 0.034 264.67);
+
+  /* cores dos cards */
+  --color-card-light: #f7f5f3;
+  --color-card-dark: #76624e;
+}
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors duration-300 ease-in-out;
+  }
+
+  /* Automatically apply smooth color transitions to structural elements */
+  div, header, nav, section, article, card, button {
+    @apply transition-colors duration-300 ease-in-out;
+  }
+}
 /* css basico do next abaixo*/
 
 /* :root {
@@ -28,8 +53,6 @@ body {
 } */
 
 body {
-  background: #fff;
-  color: #292521;
   font-family: Arial, Helvetica, sans-serif;
 }
 .shop-button {

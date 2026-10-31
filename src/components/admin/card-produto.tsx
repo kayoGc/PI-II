@@ -30,7 +30,7 @@ export default function ProductCard({
     : "Preço indisponível";
 
   return (
-    <article className={`flex flex-col overflow-hidden rounded-2xl border border-gray-200 bg-white ${oculto ? "opacity-70" : ""}`}>
+    <article className={`flex flex-col overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-600 bg-small-light dark:bg-small-dark ${oculto ? "opacity-70" : ""}`}>
 
       {/* Imagem e ações administrativas */}
       <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-[#f7f5f3]">

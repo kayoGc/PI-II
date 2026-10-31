@@ -4,6 +4,7 @@ import { FormEvent, useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import ProductCard from "@/src/components/admin/card-produto";
 import productService, { TypeProduct } from "@/src/lib/firebase/models/product";
+import ModeToggle from "@/src/components/mode-toggle";
 
 type Product = TypeProduct & { id: string };
 
@@ -101,16 +102,20 @@ export default function ManageProductsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 px-4 py-8 sm:px-6 md:py-10">
+    <main className="min-h-screen bg-light dark:bg-dark px-4 py-8 sm:px-6 md:py-10">
       <div className="mx-auto max-w-6xl">
-        <header className="mb-8 flex flex-col gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:justify-between">
+
+        <header className="mb-8 flex flex-col gap-4 border-b border-gray-200 pb-5 sm:flex-row sm:items-center sm:justify-between dark:border-gray-600">
+          
           <div>
             <p className="text-sm text-[#8a2819]">Painel administrativo</p>
-            <h1 className="mt-1 text-2xl font-semibold text-gray-900">Gerenciar produtos</h1>
-            <p className="mt-2 text-sm text-gray-600">Edite as informações, remova produtos ou controle o que aparece na loja.</p>
+            <h1 className="mt-1 text-2xl font-semibold text-gray-900 dark:text-gray-200">Gerenciar produtos</h1>
+            <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">Edite as informações, remova produtos ou controle o que aparece na loja.</p>
           </div>
+
           <div className="flex flex-wrap gap-2">
-            <Link href="/admin" className="inline-flex min-h-11 items-center rounded-lg border border-gray-300 bg-white px-4 text-sm font-medium text-gray-700 hover:bg-gray-100">Voltar ao painel</Link>
+            <ModeToggle/>
+            <Link href="/admin" className="inline-flex min-h-11 items-center rounded-lg border border-gray-300 dark:border-gray-600 bg-white px-4 text-sm font-medium text-gray-700 hover:bg-gray-100">Voltar ao painel</Link>
             <Link href="/admin/products" className="inline-flex min-h-11 items-center rounded-lg bg-[#861d10] px-4 text-sm font-medium text-white hover:bg-[#6d170d]">Cadastrar produto</Link>
           </div>
         </header>

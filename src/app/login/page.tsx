@@ -7,6 +7,7 @@ import Input from '@/src/components/Input';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import authService from '@/src/lib/firebase/auth/auth-service';
+import ModeToggle from '@/src/components/mode-toggle';
 
 // TODO
 // adicionar mensagem de erro quando login der errado
@@ -56,10 +57,10 @@ export default function LoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-white">
+    <main className="min-h-screen flex flex-col items-center justify-center p-6 bg-light dark:bg-dark">
       <div className="w-full max-w-sm flex flex-col items-center">
         
-        <div className="mb-8 w-full flex justify-center">
+        <div className="mb-8 w-full flex justify-center d-flex flex-col items-center">
           <Link href="/" aria-label="Voltar para a página inicial">
             <Image
               src="/images/Logo.svg"
@@ -68,8 +69,9 @@ export default function LoginPage() {
               height={100}
               priority
               className="h-auto w-64 md:w-80 object-contain"
-            />
+              />
           </Link>
+
         </div>
 
         <form onSubmit={handleLogin} className="w-full flex flex-col gap-5" noValidate>
@@ -82,7 +84,7 @@ export default function LoginPage() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             error={errors.username}
-          />
+            />
 
           <Input 
             id="password"
@@ -92,12 +94,13 @@ export default function LoginPage() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             error={errors.password}
-          />
+            />
 
           <Button type="submit" disabled={loading} className="w-full py-3 text-lg font-medium">
             {loading ? 'Aguarde...' : 'Entrar'}
           </Button>
         </form>
+        <ModeToggle/>
 
       </div>
     </main>

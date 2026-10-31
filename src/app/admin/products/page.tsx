@@ -97,29 +97,29 @@ export default function AdminProductsPage() {
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 flex flex-col p-6 md:p-10">
+    <main className="min-h-screen bg-light dark:bg-dark flex flex-col p-6 md:p-10">
       <div className="max-w-4xl w-full mx-auto">
         
-        <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b pb-4">
+        <div className="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b dark:border-gray-600 pb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Novo Produto (Modo Simulação)</h1>
-            <p className="text-sm text-gray-500 mt-1">Cadastre itens para testar o fluxo visual do catálogo.</p>
+            <h1 className="text-2xl font-bold text-gray-200">Novo Produto (Modo Simulação)</h1>
+            <p className="text-sm text-gray-500 bg-dark:text-gray-400 mt-1">Cadastre itens para testar o fluxo visual do catálogo.</p>
           </div>
-          <Button variant="secondary" onClick={() => router.push('/admin/products/manage')}>
+          <Button variant="secondary" onClick={() => router.push('/admin/products/manage')} className={"bg-small-light dark:bg-small-dark"}>
             Voltar aos produtos
           </Button>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+        <div className="bg-small-light dark:bg-small-dark rounded-2xl shadow-sm border border-gray-100 dark:border-gray-600 p-6 md:p-8">
 
           {img && (
-            <div className="mb-6 p-4 bg-gray-50 rounded-xl border border-gray-200 flex items-center gap-4">
+            <div className="mb-6 p-4 bg-light dark:bg-dark rounded-xl border border-gray-200 dark:border-gray-600 flex items-center gap-4">
               <div className="relative h-16 w-16 overflow-hidden rounded-lg shadow-sm">
                 <img src={img} alt="Preview" content="fill" className="object-cover" />
               </div>
               <div>
-                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wider">Imagem carregada com sucesso:</p>
-                <p className="text-xs text-gray-500">Pronta para exibição na vitrine</p>
+                <p className="text-xs font-semibold text-gray-600 dark:text-300 uppercase tracking-wider">Imagem carregada com sucesso:</p>
+                <p className="text-xs text-gray-500 dark:text-gray-200">Pronta para exibição na vitrine</p>
               </div>
             </div>
           )}
@@ -128,45 +128,45 @@ export default function AdminProductsPage() {
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-1">
-                <label htmlFor="input_nome_produto" className="block text-sm font-medium text-gray-700">Nome do Produto</label>
+                <label htmlFor="input_nome_produto" className="block text-sm font-medium text-gray-700 dark:text-gray-200">Nome do Produto</label>
                 <input 
                   required
                   type="text" 
                   id="input_nome_produto" 
                   name="input_nome_produto"
                   placeholder="Ex: Óleo Essencial de Lavanda"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm bg-white text-gray-900"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm text-gray-900 dark:text-gray-300 bg-small-light dark:bg-small-dark dark:border-gray-600"
                 />
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="input_categoria_produto" className="block text-sm font-medium text-gray-700">Categoria</label>
+                <label htmlFor="input_categoria_produto" className="block text-sm font-medium text-gray-700 dark:text-gray-200">Categoria</label>
                 <input 
                   required
                   type="text" 
                   id="input_categoria_produto" 
                   name="input_categoria_produto"
                   placeholder="Ex: Aromaterapia"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm bg-white text-gray-900"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm text-gray-900 dark:text-gray-300 bg-small-light dark:bg-small-dark dark:border-gray-600"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label htmlFor="input_descricao_produto" className="block text-sm font-medium text-gray-700">Descrição</label>
+              <label htmlFor="input_descricao_produto" className="block text-sm font-medium text-gray-700 dark:text-gray-200">Descrição</label>
               <textarea
                 required
                 id="input_descricao_produto" 
                 name="input_descricao_produto"
                 rows={3}
                 placeholder="Descreva os benefícios, aroma e modo de uso..."
-                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm bg-white text-gray-900 resize-none"
+                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm dark:text-gray-300 bg-small-light dark:bg-small-dark dark:border-gray-600 text-gray-900 resize-none "
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div className="space-y-1">
-                <label htmlFor="input_valor_produto" className="block text-sm font-medium text-gray-700">Valor (R$)</label>
+                <label htmlFor="input_valor_produto" className="block text-sm font-medium text-gray-700 dark:text-gray-200">Valor (R$)</label>
                 <input 
                   required
                   type="text"
@@ -175,18 +175,18 @@ export default function AdminProductsPage() {
                   value={displayPrice}
                   onChange={handlePriceChange}
                   placeholder="R$ 0,00"
-                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm bg-white text-gray-900 font-semibold text-red-900"
+                  className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-900/20 focus:border-red-900 transition text-sm dark:text-gray-300 bg-small-light dark:bg-small-dark dark:border-gray-600 text-gray-900 font-semibol"
                 />
               </div>
 
               <div className="space-y-1">
-                <label htmlFor="input_imagem_produto" className="block text-sm font-medium text-gray-700">Imagem do Produto</label>
+                <label htmlFor="input_imagem_produto" className="block text-sm font-medium text-gray-700 dark:text-gray-200">Imagem do Produto</label>
                 <input 
                   type="file" 
                   id="input_imagem_produto"
                   name="input_imagem_produto"
                   accept="image/*"
-                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-900 hover:file:bg-red-100 transition cursor-pointer border border-gray-300 rounded-lg p-1 bg-white"
+                  className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-900 hover:file:bg-red-100 transition cursor-pointer border border-gray-300 rounded-lg p-1 dark:text-gray-300 bg-small-light dark:bg-small-dark dark:border-gray-600"
                 />
               </div>
             </div>
