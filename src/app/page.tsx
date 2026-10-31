@@ -21,6 +21,7 @@ export default function Home() {
         if (active) {
           setProducts(
             data
+              .filter((p) => p.hidden !== true)
               .filter(
                 (p) =>
                   typeof p.name === "string" &&

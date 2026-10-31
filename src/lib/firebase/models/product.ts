@@ -1,7 +1,6 @@
 import { database } from "../firebase-config";
 import { push, ref, get, child, update, remove, set } from "firebase/database";
 import { DataSnapshot } from "firebase/database";
-import cache from "../../cache/localstorage-service";
 
 export type TypeProduct = {
     id?: string,
@@ -12,6 +11,7 @@ export type TypeProduct = {
     value: number,
     // imgName: string | null,
     imgUrl: string | null,
+    hidden?: boolean,
 }
 
 // modelo dos produtos
@@ -19,6 +19,12 @@ class Product {
 
     // onde vai ser colocado no firabase
     private refKey: string = "products";
+
+    private invalidateCache() {
+        if (typeof window !== "undefined") {
+            localStorage.removeItem(this.refKey);
+        }
+    }
 
     /**
      * salva o objeto no banco de dados
@@ -34,7 +40,8 @@ class Product {
         //     imgUrl: imgUrl
         // });     
 
-        await set(ref(database, this.refKey + `/${productId}`), obj);        
+        await set(ref(database, this.refKey + `/${productId}`), { ...obj, id: productId });
+        this.invalidateCache();
     }
 
     getNewRandomId(): string {
@@ -53,23 +60,17 @@ class Product {
             refString += `/${id}`;
         }
 
-        let cacheData = cache.getItem(refString);
-        if (cacheData !== null) {
-            return JSON.parse(cacheData);
-        }
-        
         let snapshot: DataSnapshot = await get(child(ref(database), refString));
         let response = snapshot.val();
 
         if (response === null) return [];
 
-        let objs: any[] = [];
-        // transformar objeto em array
-        if (typeof response === 'object') {
-            objs = Object.values(response);
-        } 
+        if (id !== null) {
+            return [{ ...(response as TypeProduct), id }];
+        }
 
-        cache.store(refString, JSON.stringify(objs));
+        const objs: TypeProduct[] = Object.entries(response as Record<string, TypeProduct>)
+            .map(([productId, product]) => ({ ...product, id: product.id || productId }));
 
         return objs;
     }
@@ -79,16 +80,19 @@ class Product {
      * @param id 
      * @param data 
      */
-    async updateObj(id: string, data: object): Promise<void> {
-        let updates: any = {};
+    async updateObj(id: string, data: Partial<TypeProduct>): Promise<void> {
+        const updates: Record<string, unknown> = {};
 
-        updates[`${this.refKey}/${id}`] = data;
+        for (const [field, value] of Object.entries(data)) {
+            if (value !== undefined) {
+                updates[`${this.refKey}/${id}/${field}`] = value;
+            }
+        }
+
+        if (Object.keys(updates).length === 0) return;
 
         await update(ref(database), updates);
-
-        if (cache.getItem(`${this.refKey}/${id}`) !== null) {
-            cache.store(`${this.refKey}/${id}`, data);
-        }
+        this.invalidateCache();
     }
 
     /**
@@ -97,6 +101,7 @@ class Product {
      */
     async removeObj(id: string) {
         await remove(ref(database, `${this.refKey}/${id}`));
+        this.invalidateCache();
     }
 }
 

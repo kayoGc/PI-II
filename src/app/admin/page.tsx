@@ -67,7 +67,7 @@ export default function AdminDashboardPage() {
             </div>
             <div className="mt-6">
               <Button 
-                onClick={() => router.push('/admin/products')}
+                onClick={() => router.push('/admin/products/manage')}
                 className="w-full"
               >
                 Gerenciar Produtos
