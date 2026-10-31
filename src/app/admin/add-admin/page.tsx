@@ -22,31 +22,20 @@ export default function AdminAddAdminPage() {
   // analisa se tem um usuário logado
   // se não tiver manda para a página inicial
   useEffect(() => {
+
+    authService.isUserLogged()
     
-    const a = httpsCallable(functions, 'listAdmins');
-
-    a()
-      .then((result: any) => {
-        console.log(result);
-      })
-      .catch((err: any) => {
-        console.error(err.message);
-      })
-
-    // authService.isUserLogged()
-    // .then((isLogged) => {
+    .then((isLogged) => {
       
-    //   if (!isLogged) {
-    //     router.push('/');
-    //   }
-      
+      if (!isLogged) {
+        router.push('/');
+      }
+    })
 
-
-    // })
-    // .catch((err: any) => {
-    //   console.error("Erro verificando usuário", err.message);
-    //   router.push('/');
-    // })
+    .catch((err: any) => {
+      console.error("Erro verificando usuário", err.message);
+      router.push('/');
+    })
 
   }, [])
 
