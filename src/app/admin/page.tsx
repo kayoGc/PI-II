@@ -47,7 +47,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Grid de Atalhos / Módulos do Admin */}
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           
           {/* Card: Gestão de Produtos */}
           <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
@@ -92,7 +92,7 @@ export default function AdminDashboardPage() {
               <Button 
                 variant="secondary"
                 onClick={() => router.push('/admin/buy-message')}
-                className="w-full !bg-gray-100 hover:!bg-gray-200"
+                className="w-full bg-gray-100 hover:bg-gray-200"
               >
                 Configurar Mensagem
               </Button>
@@ -100,7 +100,7 @@ export default function AdminDashboardPage() {
           </div>
 
           {/* Card: Contas Administrativas */}
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+          {/* <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
             <div>
               <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-lg bg-blue-50 text-blue-900">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -119,12 +119,12 @@ export default function AdminDashboardPage() {
               <Button 
                 variant="secondary"
                 onClick={() => router.push('/admin/accounts')}
-                className="w-full !bg-gray-100 hover:!bg-gray-200"
+                className="w-full bg-gray-100 hover:bg-gray-200"
               >
                 Gerenciar Contas
               </Button>
             </div>
-          </div>
+          </div> */}
 
         </div>
 
