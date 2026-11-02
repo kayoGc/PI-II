@@ -4,9 +4,9 @@ import { useRouter } from "next/navigation";
 import Header from "@/src/components/Header";
 
 import productService from "@/src/lib/firebase/models/product";
-import { addToCart, money, ShopProduct } from "@/src/lib/cart-service/shop";
+import { addToCart, money } from "@/src/lib/cart-service/shop";
 export default function Home() {
-  const [products, setProducts] = useState<ShopProduct[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [category, setCategory] = useState("Todas");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -31,6 +31,7 @@ export default function Home() {
               )
               .map((p) => ({
                 ...p,
+                // @ts-ignore
                 id: p.id || `${p.name}-${p.imgName || p.category}`,
               })),
           );
@@ -55,7 +56,7 @@ export default function Home() {
     (p) => category === "Todas" || p.category === category,
   );
 
-  function add(p: ShopProduct, checkout = false) {
+  function add(p: any, checkout = false) {
     try {
       addToCart(p);
       setNotice(`${p.name} adicionado ao carrinho.`);
