@@ -16,6 +16,7 @@ export default function Home() {
   
   useEffect(() => {
     let active = true;
+
     productService
       .getData()
       .then((data) => {
@@ -31,7 +32,6 @@ export default function Home() {
               )
               .map((p) => ({
                 ...p,
-                // @ts-ignore
                 id: p.id || `${p.name}-${p.imgName || p.category}`,
               })),
           );
