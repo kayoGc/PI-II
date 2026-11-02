@@ -11,7 +11,7 @@ export type TypeProduct = {
     value: number,
     // imgName: string | null,
     imgUrl: string | null,
-    imgName: string | null,
+    imgName?: string | null,
     hidden?: boolean,
 }
 
